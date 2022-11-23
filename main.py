@@ -1,20 +1,22 @@
 import time
 import os
 
+import requests
 import vk_api
 import DiscordRPC
+
+from bs4 import BeautifulSoup
+
 
 """
 vktoken must be a string, like 'b1238zxclas1289zxlasdkas9asd'
 vk_user_id can be string or int like 'llasllsldlsld' or 546823952
 discord_app_id should be int like 123984205723952
-large_image should be URI or the key received in the discord application
 """
 
 vktoken = ''
 vk_user_id = ''  # если используешь цифровой id То удали ковычки
 discord_app_id = None
-large_image = '6f042f6867a06a513653ca0131f9f61e'
 
 
 session = vk_api.VkApi(token=vktoken)
@@ -26,53 +28,53 @@ def get_vk_user_status() -> bool | tuple:
     status = vk.users.get(user_id=vk_user_id, fields='status')
     try:
         status = status[0]['status_audio']
-    except:
+    except IndexError and KeyError:
         return False
 
     current_audio = status['artist'], status['title']
     return current_audio
 
 
-audio = get_vk_user_status()
-
-
-def check_audio(func):
+def get_audio_image(image_name: str) -> str:
     """
-    Функция, которая проверяет наличие аудиозаписи в статусе вк,
-    в случае, если аудиозаписи нет в статусе - перезапускает функцию
-    :param func:
-    :return:
+    Функция через которую получаем ссылку на картинку текущего аудио
     """
-    def wrapper(status=audio, count: int = 3):
-        if not status:
-            if not count:
-                print(f"Аудио так и не было найдено, попробуем повторно подключиться через 5 минут")
-                time.sleep(300)
-                func()
-            for i in range(5, 0, -1):
-                print(f"Аудио не производится, презапуск через {i} секунд")
-                time.sleep(1)
-            os.system('cls')
-            count -= 1
-            func(count)
-        func()
-    return wrapper
+    html = requests.get(f'https://www.google.com/search?q={image_name.replace(" ", "%")}&tbm=isch')
+    soup = BeautifulSoup(html.text, 'lxml')
+    images = soup.find_all("img")
+    img = images[1].get('src')
+    return img
 
 
-@check_audio
-def stream_music_to_discord():
-    current_track = get_vk_user_status()
+def stream_music_to_discord(count: int = 3):
 
-    track = f"{current_track[-1]}"
-    artist = f"by {current_track[0]}"
+    if not (status := get_vk_user_status()):
+        if not count:
+            print(f"\033[91m\bАудио так и не было найдено, попробуем повторно подключиться через 5 минут")
+            time.sleep(300)
+            stream_music_to_discord()
+
+        for i in range(5, 0, -1):
+            print(f"\033[93m\bАудио не производится, презапуск через {i} секунд")
+            time.sleep(1)
+
+        os.system('cls')
+        stream_music_to_discord(count=count-1)
+
+    track = f"{status[-1]}"
+    artist = f"{status[0]}"
+    image = get_audio_image(f"{track} {artist}")
+
+    print(f'\033[92mCurrent Track: {artist} - {track}')
 
     rpc.set_activity(
-        large_image=large_image,
+        large_image=image,
+        small_image=image,
         state=artist,
         details=track,
-        timestamp=time.time()
+
     )
-    time.sleep(60)
+    time.sleep(30)
     stream_music_to_discord()
 
 
