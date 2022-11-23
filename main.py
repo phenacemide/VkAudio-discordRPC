@@ -66,8 +66,6 @@ def stream_music_to_discord():
     track = f"{current_track[-1]}"
     artist = f"by {current_track[0]}"
 
-    print(f"Текущий трек: {artist} - {track}")
-
     rpc.set_activity(
         large_image=large_image,
         state=artist,
