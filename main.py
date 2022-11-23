@@ -61,8 +61,10 @@ def check_audio(func):
 
 @check_audio
 def stream_music_to_discord():
-    track = f"{audio[-1]}"
-    artist = f"by {audio[0]}"
+    current_track = get_vk_user_status()
+
+    track = f"{current_track[-1]}"
+    artist = f"by {current_track[0]}"
 
     print(f"Текущий трек: {artist} - {track}")
 
