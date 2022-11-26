@@ -3,25 +3,22 @@ import os
 
 import requests
 import vk_api
-import DiscordRPC
 
+from pypresence import Presence
 from bs4 import BeautifulSoup
+from fake_useragent import UserAgent
 
 
-"""
-vktoken must be a string, like 'b1238zxclas1289zxlasdkas9asd'
-vk_user_id can be string or int like 'llasllsldlsld' or 546823952
-discord_app_id should be int like 123984205723952
-"""
+timestamp_start = int(time.time())
 
-vktoken = ''
-vk_user_id = ''  # если используешь цифровой id То удали ковычки
-discord_app_id = None
+
+with open('tokens.txt', 'r', encoding='utf-8') as file:
+    vktoken, vk_user_id, discord_app_id = [i.strip().split('=')[1] for i in file.readlines()]
 
 
 session = vk_api.VkApi(token=vktoken)
 vk = session.get_api()
-rpc = DiscordRPC.RPC.Set_ID(app_id=discord_app_id)
+rpc = Presence(discord_app_id)
 
 
 def get_vk_user_status() -> bool | tuple:
@@ -39,44 +36,58 @@ def get_audio_image(image_name: str) -> str:
     """
     Функция через которую получаем ссылку на картинку текущего аудио
     """
-    html = requests.get(f'https://www.google.com/search?q={image_name.replace(" ", "%")}&tbm=isch')
-    soup = BeautifulSoup(html.text, 'lxml')
-    images = soup.find_all("img")
-    img = images[1].get('src')
-    return img
+    try:
+        headers = {
+            'user-agent': UserAgent().random
+        }
+
+        html = requests.get(f'https://www.google.com/search?q={image_name.replace(" ", "%")}&tbm=isch', headers=headers)
+        soup = BeautifulSoup(html.text, 'lxml')
+        images = soup.find_all("img")
+        img = images[1].get('src')
+        return img
+    except Exception as ex:
+
+        print(ex)
+        return '6f042f6867a06a513653ca0131f9f61e'
 
 
 def stream_music_to_discord(count: int = 3):
 
     if not (status := get_vk_user_status()):
         if not count:
-            print(f"\033[91m\bАудио так и не было найдено, попробуем повторно подключиться через 5 минут")
-            time.sleep(300)
-            stream_music_to_discord()
+            print(f"\bАудио так и не было найдено, попробуем повторно подключиться через 2.5 минут")
+            time.sleep(150)
 
         for i in range(5, 0, -1):
-            print(f"\033[93m\bАудио не производится, презапуск через {i} секунд")
+            print(f"\bАудио не производится, презапуск через {i} секунд")
             time.sleep(1)
 
+        rpc.clear()
         os.system('cls')
+
         stream_music_to_discord(count=count-1)
 
-    track = f"{status[-1]}"
     artist = f"{status[0]}"
+    track = f"{status[-1]}"
     image = get_audio_image(f"{track} {artist}")
 
-    print(f'\033[92mCurrent Track: {artist} - {track}')
+    print(f"Current Track: {artist} - {track}")
 
-    rpc.set_activity(
+    rpc.update(
+        start=timestamp_start,
         large_image=image,
         small_image=image,
         state=artist,
         details=track,
-
     )
+
     time.sleep(30)
     stream_music_to_discord()
 
 
 if __name__ == '__main__':
-    stream_music_to_discord()
+    while 1:
+        print('Conecting...')
+        rpc.connect()
+        stream_music_to_discord()
