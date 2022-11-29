@@ -1,21 +1,12 @@
 import os
 import time
-from random import choice
 
 import requests
 import vk_api
+
 from bs4 import BeautifulSoup
 from pypresence import Presence
 
-
-UserAgents = (
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36',
-    'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)',
-    'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.157 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
-)
 
 image = ['6f042f6867a06a513653ca0131f9f61e']
 
@@ -48,11 +39,7 @@ def get_audio_image(image_name: str) -> str:
     global image
 
     try:
-        headers = {
-            'user-agent': choice(UserAgents)
-        }
-
-        req = requests.get(f'https://www.google.com/search?q={image_name.replace(" ", "%")}&tbm=isch', headers=headers)
+        req = requests.get(f'https://www.google.com/search?q={image_name.replace(" ", "%")}&tbm=isch')
         soup = BeautifulSoup(req.text, 'xml')
         images = soup.find_all("img")
         image[0] = images[1].get('src')
@@ -88,7 +75,7 @@ def stream_music_to_discord(timestamp: int = int(time.time()), count: int = 3):
         details=track,
     )
 
-    time.sleep(30)
+    time.sleep(15)
     os.system('cls')
     stream_music_to_discord(count=3)
 
