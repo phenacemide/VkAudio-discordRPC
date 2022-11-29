@@ -1,0 +1,3 @@
+vktoken=
+vk_user_id=
+discord_app_id=
