@@ -58,21 +58,24 @@ def stream_music_to_discord(timestamp: int = int(time.time()), count: int = 3):
         for i in range(5, 0, -1):
             print(f"\bАудио не производится, презапуск через {i} секунд")
             time.sleep(1)
-
+        os.system('cls')
         stream_music_to_discord(count=count - 1)
 
     artist = f"{status[0]}   "
     track = f"{status[-1]}   "
+    current_track = f"{artist.strip()} - {track.strip()}"
     img = get_audio_image(f"{track} {artist}")
 
-    print(f"Current Track: {artist.strip()} - {track.strip()}")
+    print(f"Current Track: {current_track}")
 
     rpc.update(
-        start=timestamp,
-        large_image=img,
-        small_image=img,
         state=artist,
         details=track,
+        start=timestamp,
+        large_image=img,
+        large_text=current_track,
+        small_image=img,
+        small_text=artist,
     )
 
     time.sleep(15)
