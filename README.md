@@ -35,8 +35,9 @@ ____
     **БЕЗ ЗВЁЗДОЧЕК И ЧТОБЫ В ФАЙЛЕ БЫЛО РОВНО 3 СТРОКИ**
 
   **Если всё сделали верно то будет такой вот результат**:
-  <p align="center"><img src="https://cdn.discordapp.com/attachments/1042826853372674190/1047181011424911501/image.png" alt="result"/><p>    
-
+  <p align="center"><img src="https://cdn.discordapp.com/attachments/1042826853372674190/1047853889921224705/image.png" alt="result"/><p>    
+  <p align="center"><img src="https://cdn.discordapp.com/attachments/1042826853372674190/1047853938721951835/image.png" alt="result"/><p>    
+  
 
 ### Теперь гайд для тех кто хочет сам скомпилировать код и/или запускать именно скрипт
 
