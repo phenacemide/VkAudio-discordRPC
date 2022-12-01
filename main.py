@@ -4,15 +4,16 @@ import time
 import requests
 import vk_api
 
+from urllib.parse import quote
 from bs4 import BeautifulSoup
 from pypresence import Presence
 
 
 image = ['6f042f6867a06a513653ca0131f9f61e']
 
-
 with open('tokens.txt', 'r', encoding='utf-8') as file:
     vktoken, vk_user_id, discord_app_id = [i.strip().split('=')[1] for i in file.readlines()]
+
 
 session = vk_api.VkApi(token=vktoken)
 vk = session.get_api()
@@ -26,8 +27,8 @@ def get_vk_user_status() -> bool | tuple:
     except IndexError and KeyError:
         return False
 
-    current_audio = status['artist'], status['title']
-    return current_audio
+    current_audio_details = status['artist']+'   ', status['title']+'   '
+    return current_audio_details
 
 
 def get_audio_image(image_name: str) -> str:
@@ -44,57 +45,68 @@ def get_audio_image(image_name: str) -> str:
         images = soup.find_all("img")
         image[0] = images[1].get('src')
         return image[0]
-    except Exception as exx:
-        print(f"Ошибка: {exx}")
+    except IndexError:
         return image[0]
 
 
-def stream_music_to_discord(timestamp: int = int(time.time()), count: int = 3):
-    if not (status := get_vk_user_status()):
-        if not count:
-            print(f"\bАудио так и не было найдено, попробуем повторно подключиться через 2.5 минут")
-            time.sleep(150)
-            count = 3
-        for i in range(5, 0, -1):
-            print(f"\bАудио не производится, презапуск через {i} секунд")
-            time.sleep(1)
-        os.system('cls')
-        stream_music_to_discord(count=count - 1)
+def get_current_track_link(track_name: str):
+    track_link = 'https://www.youtube.com/results?search_query='+quote(f"{track_name}")
+    return track_link
 
-    artist = f"{status[0]}   "
-    track = f"{status[-1]}   "
-    current_track = f"{artist.strip()} - {track.strip()}"
+
+def get_audio_details(audio_details: tuple):
+    artist, track = audio_details
+    audio_name = f"{artist.strip()} - {track.strip()}"
+    audio_link = get_current_track_link(audio_name)
     img = get_audio_image(f"{track} {artist}")
+    timestamp = int(time.time())
+    return artist, track, audio_name, audio_link, img, timestamp
 
-    print(f"Current Track: {current_track}")
+
+def stream_music_to_discord(audio_details: tuple):
+
+    artist, track, audio_name, audio_link, img, timestamp = get_audio_details(audio_details)
+    print(f'Current Track: {audio_name}')
 
     rpc.update(
         state=artist,
         details=track,
         start=timestamp,
         large_image=img,
-        large_text=current_track,
+        large_text=audio_name,
         small_image=img,
         small_text=artist,
+        buttons=[
+            {
+                "label": f"{audio_name[:32]}",
+                "url": audio_link,
+            }
+        ]
     )
 
+
+def main(count: int = 3):
+    if not (status := get_vk_user_status()):
+        if not count:
+            print(f"Аудио так и не было найдено, попробуем через 3 минуты")
+            time.sleep(180)
+            main()
+        os.system('cls')
+        for i in range(5, 0, -1):
+            print(f"Аудио не производится, презапуск через {i} секунд")
+            time.sleep(1)
+        main(count=count-1)
+    stream_music_to_discord(status)
     time.sleep(15)
-    os.system('cls')
-    stream_music_to_discord(count=3)
-
-
-def main():
-    try:
-        print('Conecting to discord...')
-        rpc.connect()
-        timestamp_start = int(time.time())
-        stream_music_to_discord(timestamp_start)
-    except Exception as ex:
-        print(F"Ошибка: {ex} !!!")
-        print(F"Попробуйте запустить дискорд или запустить exe от имени администратора!!\nПерезапуск через 10 секунд!!")
-        time.sleep(10)
-        main()
+    main(count=3)
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        print('Conecting to discord...')
+        rpc.connect()
+        main()
+    except Exception as ex:
+        print(F"Ошибка: {ex}")
+        time.sleep(10)
+        os.system('cls')
