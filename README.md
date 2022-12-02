@@ -11,16 +11,16 @@ ____
   **ВК**:
 
     - Переходим на [сайт](https://vk.com/editapp?act=create) и создаем Standalone приложение с любым названием
-    <p align="center"><img src="https://cdn.discordapp.com/attachments/1042826853372674190/1047171950813925468/image.png" alt="vk"/></p>
+    <p align="center"><img src="https://github.com/gentoumashiro/VkAudio-discordRPC/blob/main/media/vk_name.png" alt="vk"/></p>
 
 
     - Переходим вот [сюда](https://vk.com/apps?act=manage)  и нажимаем редактировать на созданное приложение и копируем сервисный ключ:
-    <p align="center"><img src="https://cdn.discordapp.com/attachments/1042826853372674190/1047174360735154246/image.png" alt="vk"/></p>
+    <p align="center"><img src="https://github.com/gentoumashiro/VkAudio-discordRPC/blob/main/media/vk_service_key.jpg" alt="vk"/></p>
 
   **Дискорд**:
 
     - Создаём [тут](https://discord.com/developers/applications/) приложение (Тут уже можете сделать название)
-    <p align="center"><img src="https://cdn.discordapp.com/attachments/1042826853372674190/1047177303156854834/image.png" alt="ds"/></p>
+    <p align="center"><img src="https://github.com/gentoumashiro/VkAudio-discordRPC/blob/main/media/ds.png" alt="ds"/></p>
 
 
     - Переходим в созданное вами приложение и копируем Application ID
@@ -30,13 +30,13 @@ ____
 
     - Если вы скачивали exe [отсюда](https://github.com/gentoumashiro/VkAudio-discordRPC/releases/download/release/DiscordRPC.exe), то необходимо возле скачанного файла создать текстовый файл с именем (**ВАЖНО**): tokens.txt 
     - Открываем наш файл **tokens.txt** и вставляем туда вот такие слова:
-    <p align="center"><img src="https://cdn.discordapp.com/attachments/1042826853372674190/1047180071577858139/image.png" alt="tokens"/><p>
+    <p align="center"><img src="https://github.com/gentoumashiro/VkAudio-discordRPC/blob/main/media/tokens.jpg" alt="tokens"/><p>
 
     **БЕЗ ЗВЁЗДОЧЕК И ЧТОБЫ В ФАЙЛЕ БЫЛО РОВНО 3 СТРОКИ**
 
   **Если всё сделали верно то будет такой вот результат**:
-  <p align="center"><img src="https://cdn.discordapp.com/attachments/1042826853372674190/1047853889921224705/image.png" alt="result"/><p>    
-  <p align="center"><img src="https://cdn.discordapp.com/attachments/1042826853372674190/1047853938721951835/image.png" alt="result"/><p>    
+  <p align="center"><img src="https://github.com/gentoumashiro/VkAudio-discordRPC/blob/main/media/result1.png" alt="result"/><p>    
+  <p align="center"><img src="https://github.com/gentoumashiro/VkAudio-discordRPC/blob/main/media/result2.png" alt="result"/><p>    
   
 
 ### Теперь гайд для тех кто хочет сам скомпилировать код и/или запускать именно скрипт
