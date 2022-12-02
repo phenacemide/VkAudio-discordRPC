@@ -10,6 +10,8 @@ from pypresence import Presence
 
 
 image = ['6f042f6867a06a513653ca0131f9f61e']
+timestamp = int(time.time())
+
 
 with open('tokens.txt', 'r', encoding='utf-8') as file:
     vktoken, vk_user_id, discord_app_id = [i.strip().split('=')[1] for i in file.readlines()]
@@ -59,13 +61,12 @@ def get_audio_details(audio_details: tuple):
     audio_name = f"{artist.strip()} - {track.strip()}"
     audio_link = get_current_track_link(audio_name)
     img = get_audio_image(f"{track} {artist}")
-    timestamp = int(time.time())
-    return artist, track, audio_name, audio_link, img, timestamp
+    return artist, track, audio_name, audio_link, img
 
 
 def stream_music_to_discord(audio_details: tuple):
 
-    artist, track, audio_name, audio_link, img, timestamp = get_audio_details(audio_details)
+    artist, track, audio_name, audio_link, img = get_audio_details(audio_details)
     print(f'Current Track: {audio_name}')
 
     rpc.update(
@@ -85,20 +86,23 @@ def stream_music_to_discord(audio_details: tuple):
     )
 
 
-def main(count: int = 3):
-    if not (status := get_vk_user_status()):
-        if not count:
-            print(f"Аудио так и не было найдено, попробуем через 3 минуты")
-            time.sleep(180)
-            main()
-        os.system('cls')
-        for i in range(5, 0, -1):
-            print(f"Аудио не производится, презапуск через {i} секунд")
-            time.sleep(1)
-        main(count=count-1)
-    stream_music_to_discord(status)
-    time.sleep(15)
-    main(count=3)
+def main():
+    count = 3
+    while True:
+        if not (status := get_vk_user_status()):
+            if not count:
+                print(f"Аудио так и не было найдено, попробуем через 3 минуты")
+                time.sleep(180)
+                main()
+            os.system('cls')
+            for i in range(4, 0, -1):
+                print(f"Аудио не производится, презапуск через {i} секунд")
+                time.sleep(1)
+            count -= 1
+            continue
+        stream_music_to_discord(status)
+        time.sleep(15)
+        main()
 
 
 if __name__ == '__main__':
